@@ -1,1 +1,3 @@
-document.getElementById(#{toJSON aDomId}).innerHTML = "This text was added by the Javascript part of the homepage widget.";
+$('input[type="checkbox"]').change(function() {
+    console.log('changed');
+});

@@ -1,0 +1,16 @@
+body {
+  background: #e6e6e6;
+}
+
+.header {
+  background: #d0d0d0
+}
+
+.title {
+  font-size: 64px;
+  text-align: center;
+}
+
+.container {
+  padding: 10px;
+}
