@@ -5,12 +5,11 @@ import Easing (ease, easeInQuad)
 import Dict
 import List
 import List ((::))
-import Markdown
 import Maybe
 import Set
 import Window
 import Graphics.Element (Element, container, flow, down, color, middle,
-                         right, spacer, midTop)
+                         right, spacer, midTop, width)
 import Graphics.Input as Input
 import Text
 import Text (plainText, fromString, centered, height, bold, asText, typeface)
@@ -29,7 +28,7 @@ The view updates based on the following signals:
 A state change occurs when a checkbox is checked/unchecked
  - getState gets the name of the course from the signal, flips the "checked" Bool in State.courseInfo, and adds/removes the course name from State.selectedCourses
 
-An animation occurs when a checkbox is unchecked
+Animations are currently disabled in this branch.
 -}
 
 {---------- State functions ---------}
@@ -54,9 +53,8 @@ updateState s state =
   in case not b of
       True -> { courseInfo = newCourseInfo,
                 selectedCourses = Set.insert s state.selectedCourses}
-      False -> {courseInfo = newCourseInfo, selectedCourses = state.selectedCourses}
---{ courseInfo = newCourseInfo,
--- selectedCourses = Set.remove s state.selectedCourses}
+      False -> { courseInfo = newCourseInfo,
+                 selectedCourses = Set.remove s state.selectedCourses}
 
 getState : Signal State
 getState = foldp updateState { courseInfo = makeInitialDict,
@@ -101,8 +99,9 @@ header w h = color color1 <| container w h middle titleText
 
 -- Centers the appContainer
 mainContainer : Int -> Int -> Time -> Time -> State -> Element
-mainContainer w h initTime curTime s = color color3 (container w (h - headerHeight) middle
-                                                     <| appContainer s initTime curTime 200 500)
+mainContainer w h initTime curTime s = color color3 (container w (h - headerHeight) midTop
+                                                     <| flow down [spacer 1 20,
+                                                                   appContainer s initTime curTime 250 600])
 
 -- Contains the checkboxContainer, selectedCoursesContainer, and resultsContainer
 appContainer : State -> Time -> Time -> Int -> Int -> Element
@@ -122,12 +121,12 @@ checkboxContainer courseInfo w h =
     in color color1 <| container w h midTop
            <| flow down
            <| [spacer 1 2] ++ (List.intersperse (spacer 1 2)
-                               <| List.map (uncurry <| makeCheckableButton (color3, color1) (color2, color3)) courses) ++ [spacer 1 2]
+                               <| List.map (uncurry <| makeCheckableButton (color3, color1) (color2, color3) (w - 4) 40) courses) ++ [spacer 1 2]
 
 -- Makes checkable button that acts as a checkbox
-makeCheckableButton : (Color, Color) -> (Color, Color) -> Bool -> String -> Element
-makeCheckableButton upColor downColor b label =
-    let button bColor tColor = color bColor <| container 196 40 middle <| centered <| typeface ["Roboto", "sans-serif"] <| Text.color tColor <| fromString label
+makeCheckableButton : (Color, Color) -> (Color, Color) -> Int -> Int -> Bool -> String -> Element
+makeCheckableButton upColor downColor w h b label =
+    let button bColor tColor = color bColor <| container w h middle <| centered <| typeface ["Roboto", "sans-serif"] <| height 22 <| Text.color tColor <| fromString label
         (backgroundColor, textColor) = if b then downColor else upColor
     in Input.clickable (Signal.send click label) <| button backgroundColor textColor
 
@@ -139,11 +138,12 @@ click = Signal.channel ""
 selectedCoursesContainer : State -> Time -> Time -> Int -> Int -> Element
 selectedCoursesContainer state initTime curTime w h =
   let selectedCourses = (List.map (\s -> makeFadeableElement (isUnchecked state s)
-                                         initTime curTime (196, 40)
+                                         initTime curTime (w - 4, 40)
                                          (\w h b f -> color b
                                           <| container w h middle
                                           <| centered
                                           <| Text.typeface ["Roboto", "sans-serif"]
+                                          <| height 22
                                           <| Text.color f
                                           <| fromString s))
                          (Set.toList state.selectedCourses))
@@ -162,8 +162,10 @@ resultsContainer state w h =
                                         (Dict.get s state.courseInfo))
                    (Just 0) state.selectedCourses
   in color color1 <| container w h midTop <| flow down [
-          centered <| Text.color color3 <| fromString <| "Workload score: " ++ toString sum,
-                   Markdown.toElement <| "Semester rating: " ++ resultsMessage sum]
+          spacer 1 2,
+          color color3 <| container (w - 4) 80 middle <| centered <| height 22 <| Text.color color1 <| fromString <| "Workload score: " ++ toString sum,
+          spacer 1 2,
+          color color3 <| container (w - 4) 80 middle <| width (w - 4) <| centered <| height 22 <| Text.color color1 <| fromString <| "Semester rating: " ++ resultsMessage sum]
 
 -- Returns a description based on a workload score
 resultsMessage : Int -> String
