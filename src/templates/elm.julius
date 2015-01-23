@@ -3218,7 +3218,7 @@ Elm.Main.make = function (_elm) {
       10) > 0 && _U.cmp(sum,
       15) < 1 ? "You\'ll be busy" : _U.cmp(sum,
       15) > 0 ? "It\'s going to be a tough semester..." : _U.badIf($moduleName,
-      "between lines 196 and 199");
+      "between lines 198 and 201");
    };
    var isUnchecked = F2(function (state,
    s) {
@@ -3233,7 +3233,7 @@ Elm.Main.make = function (_elm) {
                     return _._0._1;}
                  break;}
             _U.badCase($moduleName,
-            "on line 179, column 25 to 52");
+            "on line 181, column 25 to 52");
          }();
          return _U.eq(b,false);
       }();
@@ -3266,14 +3266,26 @@ Elm.Main.make = function (_elm) {
    });
    var allCourses = _P.portIn("allCourses",
    _P.incomingSignal(function (v) {
-      return typeof v === "object" && v instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.map(function (v) {
-         return typeof v === "object" && v instanceof Array ? {ctor: "_Tuple2"
-                                                              ,_0: typeof v[0] === "string" || typeof v[0] === "object" && v[0] instanceof String ? v[0] : _U.badPort("a string",
-                                                              v[0])
-                                                              ,_1: typeof v[1] === "number" ? v[1] : _U.badPort("a number",
-                                                              v[1])} : _U.badPort("an array",
-         v);
-      })) : _U.badPort("an array",v);
+      return typeof v === "object" && v instanceof Array ? {ctor: "_Tuple2"
+                                                           ,_0: typeof v[0] === "object" && v[0] instanceof Array ? Elm.Native.List.make(_elm).fromArray(v[0].map(function (v) {
+                                                              return typeof v === "object" && v instanceof Array ? {ctor: "_Tuple2"
+                                                                                                                   ,_0: typeof v[0] === "string" || typeof v[0] === "object" && v[0] instanceof String ? v[0] : _U.badPort("a string",
+                                                                                                                   v[0])
+                                                                                                                   ,_1: typeof v[1] === "object" && v[1] instanceof Array ? {ctor: "_Tuple2"
+                                                                                                                                                                            ,_0: typeof v[1][0] === "number" ? v[1][0] : _U.badPort("a number",
+                                                                                                                                                                            v[1][0])
+                                                                                                                                                                            ,_1: typeof v[1][1] === "boolean" ? v[1][1] : _U.badPort("a boolean (true or false)",
+                                                                                                                                                                            v[1][1])} : _U.badPort("an array",
+                                                                                                                   v[1])} : _U.badPort("an array",
+                                                              v);
+                                                           })) : _U.badPort("an array",
+                                                           v[0])
+                                                           ,_1: typeof v[1] === "object" && v[1] instanceof Array ? Elm.Native.List.make(_elm).fromArray(v[1].map(function (v) {
+                                                              return typeof v === "string" || typeof v === "object" && v instanceof String ? v : _U.badPort("a string",
+                                                              v);
+                                                           })) : _U.badPort("an array",
+                                                           v[1])} : _U.badPort("an array",
+      v);
    }));
    var color3 = A3($Color.rgb,
    230,
@@ -3303,20 +3315,20 @@ Elm.Main.make = function (_elm) {
                           {case "_Tuple2":
                              return _v7._0 + _v4._0;}
                           _U.badCase($moduleName,
-                          "on line 185, column 70 to 77");
+                          "on line 187, column 70 to 77");
                        }();
                     },
                     A2($Dict.get,
                     s,
                     state.courseInfo));}
                _U.badCase($moduleName,
-               "between lines 185 and 186");
+               "between lines 187 and 188");
             }();
          }),
          $Maybe.Just(0),
          state.selectedCourses),
          $ = _raw.ctor === "Just" ? _raw : _U.badCase($moduleName,
-         "between lines 185 and 187"),
+         "between lines 187 and 189"),
          sum = $._0;
          return $Graphics$Element.color(color1)(A3($Graphics$Element.container,
          w,
@@ -3374,7 +3386,7 @@ Elm.Main.make = function (_elm) {
                  animColor);
               }();}
          _U.badCase($moduleName,
-         "between lines 205 and 211");
+         "between lines 207 and 213");
       }();
    });
    var selectedCoursesContainer = F5(function (state,
@@ -3435,27 +3447,52 @@ Elm.Main.make = function (_elm) {
       return v;
    },
    "Course Load Calculator");
+   var genPermalink = function (state) {
+      return $Text.centered(A2($Text.link,
+      A3($Dict.foldl,
+      F3(function (k,_v15,acc) {
+         return function () {
+            switch (_v15.ctor)
+            {case "_Tuple2":
+               return function () {
+                    var k_ = k;
+                    return _v15._1 ? A2($Basics._op["++"],
+                    acc,
+                    A2($Basics._op["++"],
+                    "course=",
+                    A2($Basics._op["++"],
+                    k_,
+                    "&"))) : acc;
+                 }();}
+            _U.badCase($moduleName,
+            "between lines 88 and 90");
+         }();
+      }),
+      "?",
+      state.courseInfo),
+      $Text.fromString("Permalink")));
+   };
    var zip = F2(function (listX,
    listY) {
       return function () {
-         var _v15 = {ctor: "_Tuple2"
+         var _v19 = {ctor: "_Tuple2"
                     ,_0: listX
                     ,_1: listY};
-         switch (_v15.ctor)
+         switch (_v19.ctor)
          {case "_Tuple2":
-            switch (_v15._0.ctor)
+            switch (_v19._0.ctor)
               {case "::":
-                 switch (_v15._1.ctor)
+                 switch (_v19._1.ctor)
                    {case "::":
                       return A2($List._op["::"],
                         {ctor: "_Tuple2"
-                        ,_0: _v15._0._0
-                        ,_1: _v15._1._0},
-                        A2(zip,_v15._0._1,_v15._1._1));}
+                        ,_0: _v19._0._0
+                        ,_1: _v19._1._0},
+                        A2(zip,_v19._0._1,_v19._1._1));}
                    break;}
               return _L.fromArray([]);}
          _U.badCase($moduleName,
-         "between lines 88 and 90");
+         "between lines 83 and 85");
       }();
    });
    var checkboxContainer = F3(function (courseInfo,
@@ -3539,23 +3576,30 @@ Elm.Main.make = function (_elm) {
                    initTime,
                    curTime,
                    250,
-                   600)]))));
+                   800)
+                   ,A2($Graphics$Element.spacer,
+                   1,
+                   20)
+                   ,A3($Graphics$Element.container,
+                   790,
+                   20,
+                   $Graphics$Element.middle)(genPermalink(s))]))));
    });
-   var view = F4(function (_v22,
+   var view = F4(function (_v26,
    s,
    initTime,
    curTime) {
       return function () {
-         switch (_v22.ctor)
+         switch (_v26.ctor)
          {case "_Tuple2":
             return A2($Graphics$Element.flow,
               $Graphics$Element.down,
               _L.fromArray([A2(header,
-                           _v22._0,
+                           _v26._0,
                            headerHeight)
                            ,A5(mainContainer,
-                           _v22._0,
-                           _v22._1,
+                           _v26._0,
+                           _v26._1,
                            initTime,
                            curTime,
                            s)]));}
@@ -3568,25 +3612,6 @@ Elm.Main.make = function (_elm) {
    };
    var Init = function (a) {
       return {ctor: "Init",_0: a};
-   };
-   var makeInitialDict = function (courses) {
-      return A3($List.foldl,
-      F2(function (_v26,d) {
-         return function () {
-            switch (_v26.ctor)
-            {case "_Tuple2":
-               return A3($Dict.insert,
-                 _v26._0,
-                 {ctor: "_Tuple2"
-                 ,_0: _v26._1
-                 ,_1: false},
-                 d);}
-            _U.badCase($moduleName,
-            "on line 44, column 52 to 78");
-         }();
-      }),
-      $Dict.empty,
-      courses);
    };
    var updateState = F2(function (update,
    state) {
@@ -3604,7 +3629,7 @@ Elm.Main.make = function (_elm) {
                             return _._0._1;}
                          break;}
                     _U.badCase($moduleName,
-                    "on line 54, column 31 to 58");
+                    "on line 49, column 31 to 58");
                  }();
                  var newCourseInfo = A3($Dict.update,
                  update._0,
@@ -3619,7 +3644,7 @@ Elm.Main.make = function (_elm) {
                                                   ,_1: $Basics.not(_v37._0._1)});}
                             break;}
                        _U.badCase($moduleName,
-                       "on line 52, column 70 to 90");
+                       "on line 47, column 70 to 90");
                     }();
                  },
                  state.courseInfo);
@@ -3637,14 +3662,14 @@ Elm.Main.make = function (_elm) {
                                          update._0,
                                          state.selectedCourses)};}
                     _U.badCase($moduleName,
-                    "between lines 55 and 60");
+                    "between lines 50 and 55");
                  }();
               }();
             case "Init": return {_: {}
-                                ,courseInfo: makeInitialDict(update._0)
-                                ,selectedCourses: state.selectedCourses};}
+                                ,courseInfo: $Dict.fromList($Basics.fst(update._0))
+                                ,selectedCourses: $Set.fromList($Basics.snd(update._0))};}
          _U.badCase($moduleName,
-         "between lines 50 and 60");
+         "between lines 45 and 55");
       }();
    });
    var getState = A3($Signal.foldp,
@@ -3679,12 +3704,12 @@ Elm.Main.make = function (_elm) {
    });
    _elm.Main.values = {_op: _op
                       ,State: State
-                      ,makeInitialDict: makeInitialDict
                       ,updateState: updateState
                       ,Init: Init
                       ,Click: Click
                       ,getState: getState
                       ,zip: zip
+                      ,genPermalink: genPermalink
                       ,headerHeight: headerHeight
                       ,titleText: titleText
                       ,color1: color1

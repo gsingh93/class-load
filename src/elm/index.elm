@@ -125,7 +125,7 @@ header w h = color color1 <| container w h middle titleText
 mainContainer : Int -> Int -> Time -> Time -> State -> Element
 mainContainer w h initTime curTime s = color color3 (container w (h - headerHeight) midTop
                                                      <| flow down [spacer 1 20,
-                                                                   appContainer s initTime curTime 250 600,
+                                                                   appContainer s initTime curTime 250 800,
                                                                    spacer 1 20,
                                                                    container 790 20 middle <| genPermalink s])
 
