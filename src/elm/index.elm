@@ -12,7 +12,7 @@ import Graphics.Element (Element, container, flow, down, color, middle,
                          right, spacer, midTop, width)
 import Graphics.Input as Input
 import Text
-import Text (plainText, fromString, centered, height, bold, asText, typeface)
+import Text (plainText, fromString, centered, height, bold, asText, typeface, link)
 import Time
 import Time (Time, second, fps)
 import Signal
@@ -89,8 +89,10 @@ zip listX listY =
     (x::xs, y::ys) -> (x,y) :: zip xs ys
     (  _  ,   _  ) -> []
 
-{-genPermalink : State -> String
-genPermalink state = Dict.foldl (\k (_, b) acc -> if b then acc ++ k else acc) "" state.courseInfo-}
+genPermalink : State -> Element
+genPermalink state = centered <| link (Dict.foldl (\k (_, b) acc -> let k_ : String
+                                                                        k_ = k
+                                                                    in if b then acc ++ "course=" ++ k_ ++ "&" else acc) "?" state.courseInfo) (fromString "Permalink")
 
 port title : String
 port title = "Course Load Calculator"
@@ -128,7 +130,9 @@ header w h = color color1 <| container w h middle titleText
 mainContainer : Int -> Int -> Time -> Time -> State -> Element
 mainContainer w h initTime curTime s = color color3 (container w (h - headerHeight) midTop
                                                      <| flow down [spacer 1 20,
-                                                                   appContainer s initTime curTime 250 600])
+                                                                   appContainer s initTime curTime 250 600,
+                                                                   spacer 1 20,
+                                                                   container 790 20 middle <| genPermalink s])
 
 -- Contains the checkboxContainer, selectedCoursesContainer, and resultsContainer
 appContainer : State -> Time -> Time -> Int -> Int -> Element
