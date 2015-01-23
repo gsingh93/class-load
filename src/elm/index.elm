@@ -40,24 +40,46 @@ type alias State = {
   selectedCourses : Set.Set String}
 
 -- Creates the initial dictionary for State.courseInfo
-makeInitialDict : Dict.Dict String (Int, Bool)
-makeInitialDict = List.foldl (\(k, v) d -> Dict.insert k (v, False) d)
-           Dict.empty allCourses
+makeInitialDict : List (String, Int) -> Dict.Dict String (Int, Bool)
+makeInitialDict courses = List.foldl (\(k, v) d -> Dict.insert k (v, False) d)
+                          Dict.empty courses
+
+{-
+-- Update the state when a checkbox is clicked
+updateState : Update -> State -> State
+updateState update state =
+    case update of
+      Click s -> 
+          let newCourseInfo = Dict.update s (\(Just (credits, b)) -> Just (credits, not b))
+                              state.courseInfo
+              (Just (_, b)) = Dict.get s state.courseInfo
+          in case not b of
+               True -> { courseInfo = newCourseInfo,
+                         selectedCourses = Set.insert s state.selectedCourses}
+               False -> { courseInfo = newCourseInfo,
+                          selectedCourses = Set.remove s state.selectedCourses}
+      Init l -> { courseInfo = makeInitialDict (Debug.log "list" l), selectedCourses = state.selectedCourses }
+
+type Update = Init (List (String, Int)) | Click String
+getState : Signal State
+getState = foldp updateState { courseInfo = Debug.log "dict" Dict.empty,
+                               selectedCourses = Set.empty} (Signal.merge (Init <~ allCourses) (Click <~ (Signal.subscribe click)))
+-}
 
 -- Update the state when a checkbox is clicked
 updateState : String -> State -> State
 updateState s state =
-  let newCourseInfo = Dict.update s (\(Just (credits, b)) -> Just (credits, not b))
-                      state.courseInfo
-      (Just (_, b)) = Dict.get s state.courseInfo
-  in case not b of
-      True -> { courseInfo = newCourseInfo,
-                selectedCourses = Set.insert s state.selectedCourses}
-      False -> { courseInfo = newCourseInfo,
-                 selectedCourses = Set.remove s state.selectedCourses}
+    let newCourseInfo = Dict.update s (\(Just (credits, b)) -> Just (credits, not b))
+                        state.courseInfo
+        (Just (_, b)) = Dict.get s state.courseInfo
+    in case not b of
+         True -> { courseInfo = newCourseInfo,
+                   selectedCourses = Set.insert s state.selectedCourses}
+         False -> { courseInfo = newCourseInfo,
+                    selectedCourses = Set.remove s state.selectedCourses}
 
 getState : Signal State
-getState = foldp updateState { courseInfo = makeInitialDict,
+getState = foldp updateState { courseInfo = makeInitialDict allCourses,
                                selectedCourses = Set.empty} (Signal.subscribe click)
 
 {---------- Util functions and constants ----------}
@@ -81,9 +103,11 @@ color1 = rgb 27 124 192
 color2 = rgb 0 0 0xcd
 color3 = rgb 230 238 255
 
+-- port allCourses : Signal (List (String, Int))
+
 allCourses : List (String, Int)
-allCourses = [("EECS 280", 3), ("EECS 281", 5), ("EECS 482", 5),
-              ("EECS 483", 4)]
+allCourses =  [("EECS 280", 3), ("EECS 281", 5), ("EECS 482", 5),
+               ("EECS 483", 4)]
 
 {- Main view functions -}
 
@@ -163,9 +187,9 @@ resultsContainer state w h =
                    (Just 0) state.selectedCourses
   in color color1 <| container w h midTop <| flow down [
           spacer 1 2,
-          color color3 <| container (w - 4) 80 middle <| centered <| height 22 <| Text.color color1 <| fromString <| "Workload score: " ++ toString sum,
+          color color3 <| container (w - 4) 80 middle <| centered <| height 22 <| typeface ["Roboto", "sans-serif"] <| Text.color color1 <| fromString <| "Workload score: " ++ toString sum,
           spacer 1 2,
-          color color3 <| container (w - 4) 80 middle <| width (w - 4) <| centered <| height 22 <| Text.color color1 <| fromString <| "Semester rating: " ++ resultsMessage sum]
+          color color3 <| container (w - 4) 80 middle <| width (w - 4) <| centered <| height 22 <| typeface ["Roboto", "sans-serif"] <| Text.color color1 <| fromString <| "Semester rating: " ++ resultsMessage sum]
 
 -- Returns a description based on a workload score
 resultsMessage : Int -> String
