@@ -12,7 +12,7 @@ import Graphics.Element (Element, container, flow, down, color, middle,
                          right, spacer, midTop, width)
 import Graphics.Input as Input
 import Text
-import Text (plainText, fromString, centered, height, bold, asText, typeface, link)
+import Text (plainText, fromString, centered, height, bold, asText, typeface, link, leftAligned)
 import Time
 import Time (Time, second, fps)
 import Signal
@@ -52,30 +52,13 @@ updateState update state =
                          selectedCourses = Set.insert s state.selectedCourses}
                False -> { courseInfo = newCourseInfo,
                           selectedCourses = Set.remove s state.selectedCourses}
-      Init l -> { courseInfo = Dict.fromList <| fst l, selectedCourses = Set.fromList <| snd l }
+      Init l -> { courseInfo = Dict.fromList <| List.map (\(s, (i, b)) -> (s ++ " (" ++ toString i ++ ")", (i, b))) <| fst l, selectedCourses = Set.fromList <| snd l }
 
 type Update = Init (List (String, (Int, Bool)), List String) | Click String
 getState : Signal State
 getState = foldp updateState { courseInfo = Dict.empty,
                                selectedCourses = Set.empty} (Signal.merge (Init <~ allCourses) (Click <~ (Signal.subscribe click)))
 
-{-
--- Update the state when a checkbox is clicked
-updateState : String -> State -> State
-updateState s state =
-    let newCourseInfo = Dict.update s (\(Just (credits, b)) -> Just (credits, not b))
-                        state.courseInfo
-        (Just (_, b)) = Dict.get s state.courseInfo
-    in case not b of
-         True -> { courseInfo = newCourseInfo,
-                   selectedCourses = Set.insert s state.selectedCourses}
-         False -> { courseInfo = newCourseInfo,
-                    selectedCourses = Set.remove s state.selectedCourses}
-
-getState : Signal State
-getState = foldp updateState { courseInfo = makeInitialDict allCourses,
-                               selectedCourses = Set.empty} (Signal.subscribe click)
--}
 {---------- Util functions and constants ----------}
 
 zip : List a -> List b -> List (a,b)
@@ -104,11 +87,6 @@ color3 = rgb 230 238 255
 
 port allCourses : Signal (List (String, (Int, Bool)), List String)
 
-{-
-allCourses : List (String, Int)
-allCourses =  [("EECS 280", 3), ("EECS 281", 5), ("EECS 482", 5),
-               ("EECS 483", 4)]
--}
 {- Main view functions -}
 
 main : Signal Element
@@ -121,11 +99,16 @@ view (w, h) s initTime curTime = flow down [header w headerHeight,
 header : Int -> Int -> Element
 header w h = color color1 <| container w h middle titleText
 
+explanation : Int -> Element
+explanation w = width w <| leftAligned <| Text.concat [fromString "Select the courses you want to take from the left column and get a workload score in the right column. Course workloads are based on the ", link "http://www.eecs.umich.edu/eecs/undergraduate/survey/all_survey.2014.htm" (fromString "EECS workload survey"), fromString "."]
+
 -- Centers the appContainer
 mainContainer : Int -> Int -> Time -> Time -> State -> Element
 mainContainer w h initTime curTime s = color color3 (container w (h - headerHeight) midTop
                                                      <| flow down [spacer 1 20,
-                                                                   appContainer s initTime curTime 250 800,
+                                                                   explanation 790,
+                                                                   spacer 1 20,
+                                                                   appContainer s initTime curTime 250 780,
                                                                    spacer 1 20,
                                                                    container 790 20 middle <| genPermalink s])
 
@@ -142,8 +125,7 @@ appContainer s initTime curTime w h =
 -- Contains a checkbox for each course
 checkboxContainer : Dict.Dict String (Int, Bool) -> Int -> Int -> Element
 checkboxContainer courseInfo w h =
-    let courses = zip (snd <| List.unzip <| Dict.values courseInfo)
-                  (Dict.keys courseInfo)
+    let courses = Dict.foldl (\k (i, b) acc -> acc ++ [(b, k)]) [] courseInfo
     in color color1 <| container w h midTop
            <| flow down
            <| [spacer 1 2] ++ (List.intersperse (spacer 1 2)
