@@ -8,10 +8,10 @@
     </head>
     <body>
         <script type="text/javascript">
-         var allCourses = {allCourses: [["EECS 280", 3], ["EECS 281", 5],
-                                        ["EECS 482", 5], ["EECS 483", 4]]};
-         var main = Elm.fullscreen(Elm.Main, allCourses);
-         main.ports.allCourses.send(allCourses.allCourses);
+         var params = {allCourses: [[["EECS 280", [3, false]], ["EECS 281", [5, false]],
+                                    ["EECS 482", [5, false]], ["EECS 483", [4, true]]], ["EECS 483"]]};
+         var main = Elm.fullscreen(Elm.Main, params);
+         main.ports.allCourses.send(params.allCourses);
         </script>
     </body>
 </html>

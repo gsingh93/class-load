@@ -39,11 +39,6 @@ type alias State = {
   -- A Set of the names of the selected courses
   selectedCourses : Set.Set String}
 
--- Creates the initial dictionary for State.courseInfo
-makeInitialDict : List (String, Int) -> Dict.Dict String (Int, Bool)
-makeInitialDict courses = List.foldl (\(k, v) d -> Dict.insert k (v, False) d)
-                          Dict.empty courses
-
 -- Update the state when a checkbox is clicked
 updateState : Update -> State -> State
 updateState update state =
@@ -57,9 +52,9 @@ updateState update state =
                          selectedCourses = Set.insert s state.selectedCourses}
                False -> { courseInfo = newCourseInfo,
                           selectedCourses = Set.remove s state.selectedCourses}
-      Init l -> { courseInfo = makeInitialDict l, selectedCourses = state.selectedCourses }
+      Init l -> { courseInfo = Dict.fromList <| fst l, selectedCourses = Set.fromList <| snd l }
 
-type Update = Init (List (String, Int)) | Click String
+type Update = Init (List (String, (Int, Bool)), List String) | Click String
 getState : Signal State
 getState = foldp updateState { courseInfo = Dict.empty,
                                selectedCourses = Set.empty} (Signal.merge (Init <~ allCourses) (Click <~ (Signal.subscribe click)))
@@ -107,7 +102,7 @@ color1 = rgb 27 124 192
 color2 = rgb 0 0 0xcd
 color3 = rgb 230 238 255
 
-port allCourses : Signal (List (String, Int))
+port allCourses : Signal (List (String, (Int, Bool)), List String)
 
 {-
 allCourses : List (String, Int)
