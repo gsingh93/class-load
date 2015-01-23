@@ -1,13 +1,20 @@
 module Handler.Home where
 
 import Import
+import Text.Julius (rawJS)
+import Data.Text (pack)
 
 getHomeR :: Handler Html
 getHomeR = do
-    let classes = ["EECS280", "EECS281"] :: [Text]
-    defaultLayout $ do
-        addScriptRemote "//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"
-        setTitle "Course Load Calculator"
---        mconcat $ map row classes
-        $(widgetFile "homepage")
---      where row x = [julius|v[#{rawJS x}] = #{rawJS x};|]
+  let classes = [("EECS 280", 3), ("EECS 281", 4), ("EECS 482", 4), ("EECS 483", 4)]
+  defaultLayout $ do
+    setTitle "Course Load Calculator"
+    toWidget [julius|#{rawJS $ getClasses classes};
+    |]
+    $(widgetFile "elm")
+    $(widgetFile "homepage")
+
+getClasses :: [(String, Int)]-> Text
+getClasses classes = pack $ "var allCourses = { allCourses: [" ++ coursesStr ++  "] }"
+  where coursesStr = foldl (\acc (s, i) ->
+                             acc ++ "[\"" ++ s ++ "\", " ++ (show i) ++ "], " ) "" classes

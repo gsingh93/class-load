@@ -1,8 +1,0 @@
-<ul>
-    $forall class <- classes
-        <input type="checkbox">#{class}<br>
-Selected classes:
-<div id="selected-classes">
-
-Total workload score:
-<div id="workload-score">

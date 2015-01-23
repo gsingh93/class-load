@@ -1,3 +1,4 @@
-$('input[type="checkbox"]').change(function() {
-    console.log('changed');
-});
+//var allCourses = {allCourses: [["EECS 280", 3], ["EECS 281", 5],
+                               //["EECS 482", 5], ["EECS 483", 4]]};
+var main = Elm.fullscreen(Elm.Main, allCourses);
+main.ports.allCourses.send(allCourses.allCourses);

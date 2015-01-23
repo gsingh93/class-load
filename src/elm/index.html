@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <head>
+        <link href='http://fonts.googleapis.com/css?family=Roboto:400' rel='stylesheet' type='text/css'>
+        <link href="http://meyerweb.com/eric/tools/css/reset/reset.css" rel="stylesheet" type="text/css">
+        <meta http-equiv="pragma" content="no-cache">
+        <script type="text/javascript" src="elm.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+         var allCourses = {allCourses: [["EECS 280", 3], ["EECS 281", 5],
+                                        ["EECS 482", 5], ["EECS 483", 4]]};
+         var main = Elm.fullscreen(Elm.Main, allCourses);
+         main.ports.allCourses.send(allCourses.allCourses);
+        </script>
+    </body>
+</html>
