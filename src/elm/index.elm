@@ -1,7 +1,6 @@
+import Html (Html, fromElement)
 import Color (..)
 import Debug
-import Easing
-import Easing (ease, easeInQuad)
 import Dict
 import List
 import List ((::))
@@ -13,8 +12,6 @@ import Graphics.Element (Element, container, flow, down, color, middle,
 import Graphics.Input as Input
 import Text
 import Text (plainText, fromString, centered, height, bold, asText, typeface, link, leftAligned)
-import Time
-import Time (Time, second, fps)
 import Signal
 import Signal (Signal, (<~), (~), foldp)
 
@@ -23,12 +20,9 @@ The view updates based on the following signals:
  - A window resize
  - A state change
  - Checking/unchecking a checkbox
- - 60 times a second
 
 A state change occurs when a checkbox is checked/unchecked
  - getState gets the name of the course from the signal, flips the "checked" Bool in State.courseInfo, and adds/removes the course name from State.selectedCourses
-
-Animations are currently disabled in this branch.
 -}
 
 {---------- State functions ---------}
@@ -89,12 +83,12 @@ port allCourses : Signal (List (String, (Int, Bool)), List String)
 
 {- Main view functions -}
 
-main : Signal Element
-main = view <~ Window.dimensions ~ getState ~ (fst <~ (Time.timestamp <| Signal.subscribe click)) ~ (fst <~ (Time.timestamp <| fps 60))
+main : Signal Html
+main = fromElement <~ (view <~ Window.dimensions ~ getState)
 
-view : (Int, Int) -> State -> Time -> Time -> Element
-view (w, h) s initTime curTime = flow down [header w headerHeight,
-                                            mainContainer w h initTime curTime s]
+view : (Int, Int) -> State -> Element
+view (w, h) s = flow down [header w headerHeight,
+                           mainContainer w h s]
 
 header : Int -> Int -> Element
 header w h = color color1 <| container w h middle titleText
@@ -103,22 +97,22 @@ explanation : Int -> Element
 explanation w = width w <| leftAligned <| Text.concat [fromString "Select the courses you want to take from the left column and get a workload score in the right column. Course workloads are based on the ", link "http://www.eecs.umich.edu/eecs/undergraduate/survey/all_survey.2014.htm" (fromString "EECS workload survey"), fromString "."]
 
 -- Centers the appContainer
-mainContainer : Int -> Int -> Time -> Time -> State -> Element
-mainContainer w h initTime curTime s = color color3 (container w (h - headerHeight) midTop
-                                                     <| flow down [spacer 1 20,
-                                                                   explanation 790,
-                                                                   spacer 1 20,
-                                                                   appContainer s initTime curTime 250 780,
-                                                                   spacer 1 20,
-                                                                   container 790 20 middle <| genPermalink s])
+mainContainer : Int -> Int -> State -> Element
+mainContainer w h s = color color3 (container w (h - headerHeight) midTop
+                                                  <| flow down [spacer 1 20,
+                                                                explanation 790,
+                                                                spacer 1 20,
+                                                                appContainer s 250 780,
+                                                                spacer 1 20,
+                                                                container 790 20 middle <| genPermalink s])
 
 -- Contains the checkboxContainer, selectedCoursesContainer, and resultsContainer
-appContainer : State -> Time -> Time -> Int -> Int -> Element
-appContainer s initTime curTime w h =
+appContainer : State -> Int -> Int -> Element
+appContainer s w h =
   let gap = 20
   in flow right [checkboxContainer s.courseInfo w h,
                  spacer gap 1,
-                 selectedCoursesContainer s initTime curTime w h,
+                 selectedCoursesContainer s w h,
                  spacer gap 1,
                  resultsContainer s w h]
 
@@ -143,17 +137,15 @@ click : Signal.Channel String
 click = Signal.channel ""
 
 -- Contains a list of courses that were selected
-selectedCoursesContainer : State -> Time -> Time -> Int -> Int -> Element
-selectedCoursesContainer state initTime curTime w h =
-  let selectedCourses = (List.map (\s -> makeFadeableElement (isUnchecked state s)
-                                         initTime curTime (w - 4, 40)
-                                         (\w h b f -> color b
-                                          <| container w h middle
-                                          <| centered
-                                          <| Text.typeface ["Roboto", "sans-serif"]
-                                          <| height 22
-                                          <| Text.color f
-                                          <| fromString s))
+selectedCoursesContainer : State -> Int -> Int -> Element
+selectedCoursesContainer state w h =
+  let selectedCourses = (List.map (\s -> color color3
+                                   <| container (w - 4) 40 middle
+                                   <| centered
+                                   <| Text.typeface ["Roboto", "sans-serif"]
+                                   <| height 22
+                                   <| Text.color color1
+                                   <| fromString s)
                          (Set.toList state.selectedCourses))
   in color color1 <| container w h midTop <| flow down <| [spacer 1 2] ++ (List.intersperse (spacer 1 2) selectedCourses) ++ [spacer 1 2]
 
@@ -182,33 +174,3 @@ resultsMessage sum = if | sum <= 5 -> "Easy"
                         | sum > 10 && sum <= 15 -> "You'll be busy"
                         | sum > 15 -> "It's going to be a tough semester..."
 
-{- Animation functions -}
-
-makeFadeableElement : Bool -> Time -> Time -> (Int, Int) -> (Int -> Int -> Color -> Color -> Element) -> Element
-makeFadeableElement doAnim initialTime curTime (w, h) makeElement =
-    let animColor = if doAnim
-                    then (animation (fst start) (fst end) (curTime - initialTime),
-                          animation (snd start) (snd end) (curTime - initialTime))
-                    else start
-        start = (color3, color1)
-        end = (setAlpha 0 <| fst start, setAlpha 0 <| snd start)
-    in uncurry (makeElement w h) animColor
-
-setAlpha : Float -> Color -> Color
-setAlpha a c =
-    let color = toRgb c
-    in rgba color.red color.green color.blue a
-
-animation : Color -> Color -> Time -> Color
-animation start end = ease easeInQuad Easing.color start end <| 0.3 * second
-
-{- Unused:
-check : Signal.Channel (String, Bool)
-check = Signal.channel ("", False)
-
-createCheckbox : Bool -> String -> Element
-createCheckbox checked label =
-  flow right [container 30 30 middle
-              (Input.checkbox (\b -> Signal.send check (label, b)) checked),
-              container 100 30 middle <| centered <| Text.color color3 <| fromString label]
--}
