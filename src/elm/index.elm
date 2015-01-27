@@ -1,4 +1,3 @@
-import Html (Html, fromElement)
 import Color (..)
 import Debug
 import Dict
@@ -8,7 +7,7 @@ import Maybe
 import Set
 import Window
 import Graphics.Element (Element, container, flow, down, color, middle,
-                         right, spacer, midTop, width)
+                         right, spacer, midTop, width, heightOf)
 import Graphics.Input as Input
 import Text
 import Text (plainText, fromString, centered, height, bold, asText, typeface, link, leftAligned)
@@ -72,6 +71,21 @@ port title = "Course Load Calculator"
 headerHeight : Int
 headerHeight = 100
 
+buttonHeight : Int
+buttonHeight = 40
+
+buttonGap : Int
+buttonGap = 2
+
+columnWidth : Int
+columnWidth = 250
+
+columnGap : Int
+columnGap = 20
+
+minWidth : Int
+minWidth = columnWidth * 3 + columnGap * 2
+
 titleText : Element
 titleText = typeface ["sans-serif"] >> Text.color color3 >> height 40 >> bold >> centered <| fromString "Class Load Calculator"
 
@@ -83,12 +97,13 @@ port allCourses : Signal (List (String, (Int, Bool)), List String)
 
 {- Main view functions -}
 
-main : Signal Html
-main = fromElement <~ (view <~ Window.dimensions ~ getState)
+main : Signal Element
+main = view <~ Window.dimensions ~ getState
 
 view : (Int, Int) -> State -> Element
-view (w, h) s = flow down [header w headerHeight,
-                           mainContainer w h s]
+view (winW, winH) s = let w = max winW minWidth
+                      in flow down [header w headerHeight,
+                                    mainContainer w (winH - headerHeight) s]
 
 header : Int -> Int -> Element
 header w h = color color1 <| container w h middle titleText
@@ -98,32 +113,36 @@ explanation w = width w <| leftAligned <| Text.concat [fromString "Select the co
 
 -- Centers the appContainer
 mainContainer : Int -> Int -> State -> Element
-mainContainer w h s = color color3 (container w (h - headerHeight) midTop
-                                                  <| flow down [spacer 1 20,
-                                                                explanation 790,
-                                                                spacer 1 20,
-                                                                appContainer s 250 780,
-                                                                spacer 1 20,
-                                                                container 790 20 middle <| genPermalink s])
+mainContainer w winHeight s = let gap = 20
+                                  numButtons = List.length <| Dict.toList s.courseInfo
+                                  columnHeight = (buttonHeight + buttonGap) * (max 4 numButtons) + buttonGap
+                                  appContainer_ = appContainer s columnWidth columnHeight
+                                  elt = flow down [spacer 1 gap,
+                                                   explanation minWidth,
+                                                   spacer 1 gap,
+                                                   appContainer_,
+                                                   spacer 1 gap,
+                                                   container minWidth 20 middle <| genPermalink s]
+                                  h = max winHeight <| heightOf elt
+                              in color color3 <| container w h midTop elt
 
 -- Contains the checkboxContainer, selectedCoursesContainer, and resultsContainer
 appContainer : State -> Int -> Int -> Element
-appContainer s w h =
-  let gap = 20
-  in flow right [checkboxContainer s.courseInfo w h,
-                 spacer gap 1,
-                 selectedCoursesContainer s w h,
-                 spacer gap 1,
-                 resultsContainer s w h]
+appContainer s w h = flow right [checkboxContainer s.courseInfo w h,
+                                 spacer columnGap 1,
+                                 selectedCoursesContainer s w h,
+                                 spacer columnGap 1,
+                                 resultsContainer s w h]
 
 -- Contains a checkbox for each course
 checkboxContainer : Dict.Dict String (Int, Bool) -> Int -> Int -> Element
 checkboxContainer courseInfo w h =
     let courses = Dict.foldl (\k (i, b) acc -> acc ++ [(b, k)]) [] courseInfo
+        buttonSpacer = spacer 1 buttonGap
     in color color1 <| container w h midTop
            <| flow down
-           <| [spacer 1 2] ++ (List.intersperse (spacer 1 2)
-                               <| List.map (uncurry <| makeCheckableButton (color3, color1) (color2, color3) (w - 4) 40) courses) ++ [spacer 1 2]
+           <| [buttonSpacer] ++ (List.intersperse buttonSpacer
+                                 <| List.map (uncurry <| makeCheckableButton (color3, color1) (color2, color3) (w - 4) buttonHeight) courses) ++ [buttonSpacer]
 
 -- Makes checkable button that acts as a checkbox
 makeCheckableButton : (Color, Color) -> (Color, Color) -> Int -> Int -> Bool -> String -> Element
@@ -161,11 +180,12 @@ resultsContainer state w h =
   let (Just sum) = Set.foldl (\s (Just acc) -> Maybe.map (\(i, _) -> i + acc)
                                         (Dict.get s state.courseInfo))
                    (Just 0) state.selectedCourses
+      cardHeight = 2 * buttonHeight + buttonGap
   in color color1 <| container w h midTop <| flow down [
           spacer 1 2,
-          color color3 <| container (w - 4) 80 middle <| centered <| height 22 <| typeface ["Roboto", "sans-serif"] <| Text.color color1 <| fromString <| "Workload score: " ++ toString sum,
+          color color3 <| container (w - 4) cardHeight middle <| centered <| height 22 <| typeface ["Roboto", "sans-serif"] <| Text.color color1 <| fromString <| "Workload score: " ++ toString sum,
           spacer 1 2,
-          color color3 <| container (w - 4) 80 middle <| width (w - 4) <| centered <| height 22 <| typeface ["Roboto", "sans-serif"] <| Text.color color1 <| fromString <| "Semester rating: " ++ resultsMessage sum]
+          color color3 <| container (w - 4) cardHeight middle <| width (w - 4) <| centered <| height 22 <| typeface ["Roboto", "sans-serif"] <| Text.color color1 <| fromString <| "Semester rating: " ++ resultsMessage sum]
 
 -- Returns a description based on a workload score
 resultsMessage : Int -> String
