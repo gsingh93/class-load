@@ -12,8 +12,7 @@ $newline never
         <meta name="description" content="Calculate course load for UMich EECS classes">
 
         <meta name="viewport" content="width=device-width,initial-scale=1">
-        <link href='http://fonts.googleapis.com/css?family=Roboto:400' rel='stylesheet' type='text/css'>
-        <link href="http://meyerweb.com/eric/tools/css/reset/reset.css" rel="stylesheet" type="text/css">
+        <link href='https://fonts.googleapis.com/css?family=Roboto:400' rel='stylesheet' type='text/css'>
         <meta http-equiv="pragma" content="no-cache">
 
         ^{pageHead pc}
