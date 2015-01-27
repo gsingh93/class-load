@@ -55,15 +55,12 @@ getState = foldp updateState { courseInfo = Dict.empty,
 {---------- Util functions and constants ----------}
 
 zip : List a -> List b -> List (a,b)
-zip listX listY =
-  case (listX, listY) of
-    (x::xs, y::ys) -> (x,y) :: zip xs ys
-    (  _  ,   _  ) -> []
+zip = List.map2 (,) 
 
 genPermalink : State -> Element
-genPermalink state = centered <| link (Dict.foldl (\k (_, b) acc -> let k_ : String
-                                                                        k_ = k
-                                                                    in if b then acc ++ "course=" ++ k_ ++ "&" else acc) "?" state.courseInfo) (fromString "Permalink")
+genPermalink state =
+    -- TODO: Check string concat efficiency
+    centered <| link (Set.foldl (\v acc -> acc ++ "course=" ++ v ++ "&") "?" state.selectedCourses) (fromString "Permalink")
 
 port title : String
 port title = "Course Load Calculator"
@@ -90,7 +87,7 @@ titleText : Element
 titleText = typeface ["sans-serif"] >> Text.color color3 >> height 40 >> bold >> centered <| fromString "Class Load Calculator"
 
 color1 = rgb 27 124 192
-color2 = rgb 0 0 0xcd
+color2 = rgb 0 0 205
 color3 = rgb 230 238 255
 
 port allCourses : Signal (List (String, (Int, Bool)), List String)
@@ -108,9 +105,6 @@ view (winW, winH) s = let w = max winW minWidth
 header : Int -> Int -> Element
 header w h = color color1 <| container w h middle titleText
 
-explanation : Int -> Element
-explanation w = width w <| leftAligned <| Text.concat [fromString "Select the courses you want to take from the left column and get a workload score in the right column. Course workloads are based on the ", link "http://www.eecs.umich.edu/eecs/undergraduate/survey/all_survey.2014.htm" (fromString "EECS workload survey"), fromString "."]
-
 -- Centers the appContainer
 mainContainer : Int -> Int -> State -> Element
 mainContainer w winHeight s = let gap = 20
@@ -125,6 +119,9 @@ mainContainer w winHeight s = let gap = 20
                                                    container minWidth 20 middle <| genPermalink s]
                                   h = max winHeight <| heightOf elt
                               in color color3 <| container w h midTop elt
+
+explanation : Int -> Element
+explanation w = width w <| leftAligned <| Text.concat [fromString "Select the courses you want to take from the left column and get a workload score in the right column. Course workloads are based on the ", link "http://www.eecs.umich.edu/eecs/undergraduate/survey/all_survey.2014.htm" (fromString "EECS workload survey"), fromString "."]
 
 -- Contains the checkboxContainer, selectedCoursesContainer, and resultsContainer
 appContainer : State -> Int -> Int -> Element
@@ -141,7 +138,7 @@ checkboxContainer courseInfo w h =
         buttonSpacer = spacer 1 buttonGap
     in color color1 <| container w h midTop
            <| flow down
-           <| [buttonSpacer] ++ (List.intersperse buttonSpacer
+           <| buttonSpacer :: (List.intersperse buttonSpacer
                                  <| List.map (uncurry <| makeCheckableButton (color3, color1) (color2, color3) (w - 4) buttonHeight) courses) ++ [buttonSpacer]
 
 -- Makes checkable button that acts as a checkbox
@@ -159,14 +156,15 @@ click = Signal.channel ""
 selectedCoursesContainer : State -> Int -> Int -> Element
 selectedCoursesContainer state w h =
   let selectedCourses = (List.map (\s -> color color3
-                                   <| container (w - 4) 40 middle
+                                   <| container (w - 4) buttonHeight middle
                                    <| centered
                                    <| Text.typeface ["Roboto", "sans-serif"]
                                    <| height 22
                                    <| Text.color color1
                                    <| fromString s)
                          (Set.toList state.selectedCourses))
-  in color color1 <| container w h midTop <| flow down <| [spacer 1 2] ++ (List.intersperse (spacer 1 2) selectedCourses) ++ [spacer 1 2]
+      buttonSpacer = spacer 1 buttonGap
+  in color color1 <| container w h midTop <| flow down <| buttonSpacer :: (List.intersperse buttonSpacer selectedCourses) ++ [buttonSpacer]
 
 -- Returns true if the given course exists in State.selectedCourses but is unchecked according to State.courseInfo
 isUnchecked : State -> String -> Bool
@@ -181,16 +179,17 @@ resultsContainer state w h =
                                         (Dict.get s state.courseInfo))
                    (Just 0) state.selectedCourses
       cardHeight = 2 * buttonHeight + buttonGap
+      makeCard s = color color3 <| container (w - 4) cardHeight middle <| width (w - 4) <| centered <| height 22 <| typeface ["Roboto", "sans-serif"] <| Text.color color1 <| fromString s
   in color color1 <| container w h midTop <| flow down [
-          spacer 1 2,
-          color color3 <| container (w - 4) cardHeight middle <| centered <| height 22 <| typeface ["Roboto", "sans-serif"] <| Text.color color1 <| fromString <| "Workload score: " ++ toString sum,
-          spacer 1 2,
-          color color3 <| container (w - 4) cardHeight middle <| width (w - 4) <| centered <| height 22 <| typeface ["Roboto", "sans-serif"] <| Text.color color1 <| fromString <| "Semester rating: " ++ resultsMessage sum]
+          spacer 1 buttonGap,
+          makeCard <| "Workload score: " ++ toString sum,
+          spacer 1 buttonGap,
+          makeCard <| "Semester rating: " ++ resultsMessage sum]
 
 -- Returns a description based on a workload score
 resultsMessage : Int -> String
-resultsMessage sum = if | sum <= 5 -> "Easy"
-                        | sum > 5 && sum <= 10 -> "Not too bad"
-                        | sum > 10 && sum <= 15 -> "You'll be busy"
-                        | sum > 15 -> "It's going to be a tough semester..."
+resultsMessage sum = if | sum <= 6 -> "Easy"
+                        | sum > 6 && sum <= 9 -> "Not too bad"
+                        | sum > 9 && sum <= 12 -> "Pretty tough"
+                        | sum > 12 -> "LOL, you're screwed."
 
