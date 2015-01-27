@@ -2958,17 +2958,17 @@ Elm.Main.make = function (_elm) {
       v);
    }));
    var color3 = A3($Color.rgb,
-   230,
-   238,
+   255,
+   255,
    255);
    var color2 = A3($Color.rgb,
    0,
    0,
    205);
    var color1 = A3($Color.rgb,
-   27,
-   124,
-   192);
+   17,
+   132,
+   206);
    var titleText = function ($) {
       return $Text.centered($Text.bold($Text.height(40)($Text.color(color3)($Text.typeface(_L.fromArray(["sans-serif"]))($)))));
    }($Text.fromString("Class Load Calculator"));

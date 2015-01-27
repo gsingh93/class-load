@@ -86,9 +86,9 @@ minWidth = columnWidth * 3 + columnGap * 2
 titleText : Element
 titleText = typeface ["sans-serif"] >> Text.color color3 >> height 40 >> bold >> centered <| fromString "Class Load Calculator"
 
-color1 = rgb 27 124 192
+color1 = rgb 17 132 206
 color2 = rgb 0 0 205
-color3 = rgb 230 238 255
+color3 = rgb 255 255 255
 
 port allCourses : Signal (List (String, (Int, Bool)), List String)
 
