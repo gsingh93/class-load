@@ -1688,322 +1688,6 @@ Elm.Dict.make = function (_elm) {
                       ,fromList: fromList};
    return _elm.Dict.values;
 };
-Elm.Easing = Elm.Easing || {};
-Elm.Easing.make = function (_elm) {
-   "use strict";
-   _elm.Easing = _elm.Easing || {};
-   if (_elm.Easing.values)
-   return _elm.Easing.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   _P = _N.Ports.make(_elm),
-   $moduleName = "Easing",
-   $Basics = Elm.Basics.make(_elm),
-   $Color = Elm.Color.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Time = Elm.Time.make(_elm);
-   var cycle = F3(function (animation,
-   d,
-   t) {
-      return A2(animation,
-      1,
-      t / d - $Basics.toFloat($Basics.floor(t / d)));
-   });
-   var flip = F2(function (easing,
-   time) {
-      return easing(1 - time);
-   });
-   var retour = F2(function (easing,
-   time) {
-      return _U.cmp(time,
-      0.5) < 0 ? easing(time * 2) : A2(flip,
-      easing,
-      (time - 0.5) * 2);
-   });
-   var invert = F2(function (easing,
-   time) {
-      return 1 - easing(1 - time);
-   });
-   var inOut = F3(function (e1,
-   e2,
-   time) {
-      return _U.cmp(time,
-      0.5) < 0 ? e1(time * 2) / 2 : 0.5 + e2((time - 0.5) * 2) / 2;
-   });
-   var easeInElastic = function (time) {
-      return function () {
-         var t$ = time - 1;
-         var p = 0.3;
-         var s = 7.5e-2;
-         return 0 - Math.pow(2,
-         10 * t$) * $Basics.sin((t$ - s) * (2 * $Basics.pi) / p);
-      }();
-   };
-   var easeOutElastic = invert(easeInElastic);
-   var easeInOutElastic = A2(inOut,
-   easeInElastic,
-   easeOutElastic);
-   var easeOutBounce = function (time) {
-      return function () {
-         var t4 = time - 2.65 / 2.75;
-         var t3 = time - 2.25 / 2.75;
-         var t2 = time - 1.5 / 2.75;
-         var a = 7.5625;
-         return _U.cmp(time,
-         1 / 2.75) < 0 ? a * time * time : _U.cmp(time,
-         2 / 2.75) < 0 ? a * t2 * t2 + 0.75 : _U.cmp(time,
-         2.5 / 2.75) < 0 ? a * t3 * t3 + 0.9375 : a * t4 * t4 + 0.984375;
-      }();
-   };
-   var easeInBounce = invert(easeOutBounce);
-   var easeInOutBounce = A2(inOut,
-   easeInBounce,
-   easeOutBounce);
-   var easeInBack = function (time) {
-      return time * time * (2.70158 * time - 1.70158);
-   };
-   var easeOutBack = invert(easeInBack);
-   var easeInOutBack = A2(inOut,
-   easeInBack,
-   easeOutBack);
-   var easeOutCirc = function (time) {
-      return $Basics.sqrt(1 - Math.pow(time - 1,
-      2));
-   };
-   var easeInCirc = invert(easeOutCirc);
-   var easeInOutCirc = A2(inOut,
-   easeInCirc,
-   easeOutCirc);
-   var easeInExpo = function (time) {
-      return Math.pow(2,
-      10 * (time - 1));
-   };
-   var easeOutExpo = invert(easeInExpo);
-   var easeInOutExpo = A2(inOut,
-   easeInExpo,
-   easeOutExpo);
-   var easeOutSine = function (time) {
-      return $Basics.sin(time * ($Basics.pi / 2));
-   };
-   var easeInSine = invert(easeOutSine);
-   var easeInOutSine = A2(inOut,
-   easeInSine,
-   easeOutSine);
-   var easeInQuint = function (time) {
-      return Math.pow(time,5);
-   };
-   var easeOutQuint = invert(easeInQuint);
-   var easeInOutQuint = A2(inOut,
-   easeInQuint,
-   easeOutQuint);
-   var easeInQuart = function (time) {
-      return Math.pow(time,4);
-   };
-   var easeOutQuart = invert(easeInQuart);
-   var easeInOutQuart = A2(inOut,
-   easeInQuart,
-   easeOutQuart);
-   var easeInCubic = function (time) {
-      return Math.pow(time,3);
-   };
-   var easeOutCubic = invert(easeInCubic);
-   var easeInOutCubic = A2(inOut,
-   easeInCubic,
-   easeOutCubic);
-   var easeInQuad = function (time) {
-      return Math.pow(time,2);
-   };
-   var easeOutQuad = invert(easeInQuad);
-   var easeInOutQuad = A2(inOut,
-   easeInQuad,
-   easeOutQuad);
-   var linear = $Basics.identity;
-   var pair = F4(function (interpolate,
-   _v0,
-   _v1,
-   v) {
-      return function () {
-         switch (_v1.ctor)
-         {case "_Tuple2":
-            return function () {
-                 switch (_v0.ctor)
-                 {case "_Tuple2":
-                    return {ctor: "_Tuple2"
-                           ,_0: A3(interpolate,
-                           _v0._0,
-                           _v1._0,
-                           v)
-                           ,_1: A3(interpolate,
-                           _v0._1,
-                           _v1._1,
-                           v)};}
-                 _U.badCase($moduleName,
-                 "on line 126, column 6 to 46");
-              }();}
-         _U.badCase($moduleName,
-         "on line 126, column 6 to 46");
-      }();
-   });
-   var $float = F3(function (from,
-   to,
-   v) {
-      return from + (to - from) * v;
-   });
-   var point2d = F3(function (from,
-   to,
-   v) {
-      return {_: {}
-             ,x: A3($float,from.x,to.x,v)
-             ,y: A3($float,from.y,to.y,v)};
-   });
-   var point3d = F3(function (from,
-   to,
-   v) {
-      return {_: {}
-             ,x: A3($float,from.x,to.x,v)
-             ,y: A3($float,from.y,to.y,v)
-             ,z: A3($float,from.z,to.z,v)};
-   });
-   var color = F3(function (from,
-   to,
-   v) {
-      return function () {
-         var float$ = F3(function (from,
-         to,
-         v) {
-            return $Basics.round(A3($float,
-            $Basics.toFloat(from),
-            $Basics.toFloat(to),
-            v));
-         });
-         var $ = {ctor: "_Tuple2"
-                 ,_0: $Color.toRgb(from)
-                 ,_1: $Color.toRgb(to)},
-         rgb1 = $._0,
-         rgb2 = $._1;
-         var $ = {ctor: "_Tuple4"
-                 ,_0: rgb1.red
-                 ,_1: rgb1.green
-                 ,_2: rgb1.blue
-                 ,_3: rgb1.alpha},
-         r1 = $._0,
-         g1 = $._1,
-         b1 = $._2,
-         a1 = $._3;
-         var $ = {ctor: "_Tuple4"
-                 ,_0: rgb2.red
-                 ,_1: rgb2.green
-                 ,_2: rgb2.blue
-                 ,_3: rgb2.alpha},
-         r2 = $._0,
-         g2 = $._1,
-         b2 = $._2,
-         a2 = $._3;
-         return A4($Color.rgba,
-         A3(float$,r1,r2,v),
-         A3(float$,g1,g2,v),
-         A3(float$,b1,b2,v),
-         A3($float,a1,a2,v));
-      }();
-   });
-   var bezier = F5(function (x1,
-   y1,
-   x2,
-   y2,
-   time) {
-      return function () {
-         var casteljau = function (ps) {
-            return function () {
-               switch (ps.ctor)
-               {case "::": switch (ps._0.ctor)
-                    {case "_Tuple2":
-                       switch (ps._1.ctor)
-                         {case "[]": return ps._0._1;}
-                         break;}
-                    break;}
-               return casteljau(A3($List.map2,
-               F2(function (x,y) {
-                  return A4(pair,
-                  $float,
-                  x,
-                  y,
-                  time);
-               }),
-               ps,
-               $List.tail(ps)));
-            }();
-         };
-         return casteljau(_L.fromArray([{ctor: "_Tuple2"
-                                        ,_0: 0
-                                        ,_1: 0}
-                                       ,{ctor: "_Tuple2",_0: x1,_1: y1}
-                                       ,{ctor: "_Tuple2",_0: x2,_1: y2}
-                                       ,{ctor: "_Tuple2"
-                                        ,_0: 1
-                                        ,_1: 1}]));
-      }();
-   });
-   var ease = F6(function (easing,
-   interpolate,
-   from,
-   to,
-   duration,
-   time) {
-      return A3(interpolate,
-      from,
-      to,
-      easing(A2($Basics.min,
-      time / duration,
-      1)));
-   });
-   _elm.Easing.values = {_op: _op
-                        ,ease: ease
-                        ,$float: $float
-                        ,point2d: point2d
-                        ,point3d: point3d
-                        ,color: color
-                        ,pair: pair
-                        ,linear: linear
-                        ,bezier: bezier
-                        ,easeInQuad: easeInQuad
-                        ,easeOutQuad: easeOutQuad
-                        ,easeInOutQuad: easeInOutQuad
-                        ,easeInCubic: easeInCubic
-                        ,easeOutCubic: easeOutCubic
-                        ,easeInOutCubic: easeInOutCubic
-                        ,easeInQuart: easeInQuart
-                        ,easeOutQuart: easeOutQuart
-                        ,easeInOutQuart: easeInOutQuart
-                        ,easeInQuint: easeInQuint
-                        ,easeOutQuint: easeOutQuint
-                        ,easeInOutQuint: easeInOutQuint
-                        ,easeInSine: easeInSine
-                        ,easeOutSine: easeOutSine
-                        ,easeInOutSine: easeInOutSine
-                        ,easeInExpo: easeInExpo
-                        ,easeOutExpo: easeOutExpo
-                        ,easeInOutExpo: easeInOutExpo
-                        ,easeInCirc: easeInCirc
-                        ,easeOutCirc: easeOutCirc
-                        ,easeInOutCirc: easeInOutCirc
-                        ,easeInBack: easeInBack
-                        ,easeOutBack: easeOutBack
-                        ,easeInOutBack: easeInOutBack
-                        ,easeInBounce: easeInBounce
-                        ,easeOutBounce: easeOutBounce
-                        ,easeInOutBounce: easeInOutBounce
-                        ,easeInElastic: easeInElastic
-                        ,easeOutElastic: easeOutElastic
-                        ,easeInOutElastic: easeInOutElastic
-                        ,inOut: inOut
-                        ,invert: invert
-                        ,flip: flip
-                        ,retour: retour
-                        ,cycle: cycle};
-   return _elm.Easing.values;
-};
 Elm.Graphics = Elm.Graphics || {};
 Elm.Graphics.Collage = Elm.Graphics.Collage || {};
 Elm.Graphics.Collage.make = function (_elm) {
@@ -3181,7 +2865,6 @@ Elm.Main.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Color = Elm.Color.make(_elm),
    $Dict = Elm.Dict.make(_elm),
-   $Easing = Elm.Easing.make(_elm),
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $Graphics$Input = Elm.Graphics.Input.make(_elm),
    $List = Elm.List.make(_elm),
@@ -3189,36 +2872,16 @@ Elm.Main.make = function (_elm) {
    $Set = Elm.Set.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Text = Elm.Text.make(_elm),
-   $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
-   var animation = F2(function (start,
-   end) {
-      return A4($Easing.ease,
-      $Easing.easeInQuad,
-      $Easing.color,
-      start,
-      end)(0.3 * $Time.second);
-   });
-   var setAlpha = F2(function (a,
-   c) {
-      return function () {
-         var color = $Color.toRgb(c);
-         return A4($Color.rgba,
-         color.red,
-         color.green,
-         color.blue,
-         a);
-      }();
-   });
    var resultsMessage = function (sum) {
       return _U.cmp(sum,
-      5) < 1 ? "Easy" : _U.cmp(sum,
-      5) > 0 && _U.cmp(sum,
-      10) < 1 ? "Not too bad" : _U.cmp(sum,
-      10) > 0 && _U.cmp(sum,
-      15) < 1 ? "You\'ll be busy" : _U.cmp(sum,
-      15) > 0 ? "It\'s going to be a tough semester..." : _U.badIf($moduleName,
-      "between lines 198 and 201");
+      6) < 1 ? "Easy" : _U.cmp(sum,
+      6) > 0 && _U.cmp(sum,
+      9) < 1 ? "Not too bad" : _U.cmp(sum,
+      9) > 0 && _U.cmp(sum,
+      12) < 1 ? "Pretty tough" : _U.cmp(sum,
+      12) > 0 ? "LOL, you\'re screwed." : _U.badIf($moduleName,
+      "between lines 191 and 194");
    };
    var isUnchecked = F2(function (state,
    s) {
@@ -3233,7 +2896,7 @@ Elm.Main.make = function (_elm) {
                     return _._0._1;}
                  break;}
             _U.badCase($moduleName,
-            "on line 181, column 25 to 52");
+            "on line 172, column 25 to 52");
          }();
          return _U.eq(b,false);
       }();
@@ -3264,6 +2927,13 @@ Elm.Main.make = function (_elm) {
          textColor));
       }();
    });
+   var explanation = function (w) {
+      return $Graphics$Element.width(w)($Text.leftAligned($Text.concat(_L.fromArray([$Text.fromString("Select the courses you want to take from the left column and get a workload score in the right column. Course workloads are based on the ")
+                                                                                    ,A2($Text.link,
+                                                                                    "http://www.eecs.umich.edu/eecs/undergraduate/survey/all_survey.2014.htm",
+                                                                                    $Text.fromString("EECS workload survey"))
+                                                                                    ,$Text.fromString(".")]))));
+   };
    var allCourses = _P.portIn("allCourses",
    _P.incomingSignal(function (v) {
       return typeof v === "object" && v instanceof Array ? {ctor: "_Tuple2"
@@ -3299,138 +2969,6 @@ Elm.Main.make = function (_elm) {
    27,
    124,
    192);
-   var resultsContainer = F3(function (state,
-   w,
-   h) {
-      return function () {
-         var _raw = A3($Set.foldl,
-         F2(function (s,_v4) {
-            return function () {
-               switch (_v4.ctor)
-               {case "Just":
-                  return A2($Maybe.map,
-                    function (_v7) {
-                       return function () {
-                          switch (_v7.ctor)
-                          {case "_Tuple2":
-                             return _v7._0 + _v4._0;}
-                          _U.badCase($moduleName,
-                          "on line 187, column 70 to 77");
-                       }();
-                    },
-                    A2($Dict.get,
-                    s,
-                    state.courseInfo));}
-               _U.badCase($moduleName,
-               "between lines 187 and 188");
-            }();
-         }),
-         $Maybe.Just(0),
-         state.selectedCourses),
-         $ = _raw.ctor === "Just" ? _raw : _U.badCase($moduleName,
-         "between lines 187 and 189"),
-         sum = $._0;
-         return $Graphics$Element.color(color1)(A3($Graphics$Element.container,
-         w,
-         h,
-         $Graphics$Element.midTop)(A2($Graphics$Element.flow,
-         $Graphics$Element.down,
-         _L.fromArray([A2($Graphics$Element.spacer,
-                      1,
-                      2)
-                      ,$Graphics$Element.color(color3)(A3($Graphics$Element.container,
-                      w - 4,
-                      80,
-                      $Graphics$Element.middle)($Text.centered($Text.height(22)($Text.typeface(_L.fromArray(["Roboto"
-                                                                                                            ,"sans-serif"]))($Text.color(color1)($Text.fromString(A2($Basics._op["++"],
-                      "Workload score: ",
-                      $Basics.toString(sum)))))))))
-                      ,A2($Graphics$Element.spacer,
-                      1,
-                      2)
-                      ,$Graphics$Element.color(color3)(A3($Graphics$Element.container,
-                      w - 4,
-                      80,
-                      $Graphics$Element.middle)($Graphics$Element.width(w - 4)($Text.centered($Text.height(22)($Text.typeface(_L.fromArray(["Roboto"
-                                                                                                                                           ,"sans-serif"]))($Text.color(color1)($Text.fromString(A2($Basics._op["++"],
-                      "Semester rating: ",
-                      resultsMessage(sum))))))))))]))));
-      }();
-   });
-   var makeFadeableElement = F5(function (doAnim,
-   initialTime,
-   curTime,
-   _v11,
-   makeElement) {
-      return function () {
-         switch (_v11.ctor)
-         {case "_Tuple2":
-            return function () {
-                 var start = {ctor: "_Tuple2"
-                             ,_0: color3
-                             ,_1: color1};
-                 var end = {ctor: "_Tuple2"
-                           ,_0: setAlpha(0)($Basics.fst(start))
-                           ,_1: setAlpha(0)($Basics.snd(start))};
-                 var animColor = doAnim ? {ctor: "_Tuple2"
-                                          ,_0: A3(animation,
-                                          $Basics.fst(start),
-                                          $Basics.fst(end),
-                                          curTime - initialTime)
-                                          ,_1: A3(animation,
-                                          $Basics.snd(start),
-                                          $Basics.snd(end),
-                                          curTime - initialTime)} : start;
-                 return A2($Basics.uncurry,
-                 A2(makeElement,_v11._0,_v11._1),
-                 animColor);
-              }();}
-         _U.badCase($moduleName,
-         "between lines 207 and 213");
-      }();
-   });
-   var selectedCoursesContainer = F5(function (state,
-   initTime,
-   curTime,
-   w,
-   h) {
-      return function () {
-         var selectedCourses = A2($List.map,
-         function (s) {
-            return A5(makeFadeableElement,
-            A2(isUnchecked,state,s),
-            initTime,
-            curTime,
-            {ctor: "_Tuple2"
-            ,_0: w - 4
-            ,_1: 40},
-            F4(function (w,h,b,f) {
-               return $Graphics$Element.color(b)(A3($Graphics$Element.container,
-               w,
-               h,
-               $Graphics$Element.middle)($Text.centered($Text.typeface(_L.fromArray(["Roboto"
-                                                                                    ,"sans-serif"]))($Text.height(22)($Text.color(f)($Text.fromString(s)))))));
-            }));
-         },
-         $Set.toList(state.selectedCourses));
-         return $Graphics$Element.color(color1)(A3($Graphics$Element.container,
-         w,
-         h,
-         $Graphics$Element.midTop)($Graphics$Element.flow($Graphics$Element.down)(A2($Basics._op["++"],
-         _L.fromArray([A2($Graphics$Element.spacer,
-         1,
-         2)]),
-         A2($Basics._op["++"],
-         A2($List.intersperse,
-         A2($Graphics$Element.spacer,
-         1,
-         2),
-         selectedCourses),
-         _L.fromArray([A2($Graphics$Element.spacer,
-         1,
-         2)]))))));
-      }();
-   });
    var titleText = function ($) {
       return $Text.centered($Text.bold($Text.height(40)($Text.color(color3)($Text.typeface(_L.fromArray(["sans-serif"]))($)))));
    }($Text.fromString("Class Load Calculator"));
@@ -3441,78 +2979,41 @@ Elm.Main.make = function (_elm) {
       $Graphics$Element.middle,
       titleText));
    });
-   var headerHeight = 100;
-   var title = _P.portOut("title",
-   function (v) {
-      return v;
-   },
-   "Course Load Calculator");
-   var genPermalink = function (state) {
-      return $Text.centered(A2($Text.link,
-      A3($Dict.foldl,
-      F3(function (k,_v15,acc) {
-         return function () {
-            switch (_v15.ctor)
-            {case "_Tuple2":
-               return function () {
-                    var k_ = k;
-                    return _v15._1 ? A2($Basics._op["++"],
-                    acc,
-                    A2($Basics._op["++"],
-                    "course=",
-                    A2($Basics._op["++"],
-                    k_,
-                    "&"))) : acc;
-                 }();}
-            _U.badCase($moduleName,
-            "between lines 88 and 90");
-         }();
-      }),
-      "?",
-      state.courseInfo),
-      $Text.fromString("Permalink")));
-   };
-   var zip = F2(function (listX,
-   listY) {
-      return function () {
-         var _v19 = {ctor: "_Tuple2"
-                    ,_0: listX
-                    ,_1: listY};
-         switch (_v19.ctor)
-         {case "_Tuple2":
-            switch (_v19._0.ctor)
-              {case "::":
-                 switch (_v19._1.ctor)
-                   {case "::":
-                      return A2($List._op["::"],
-                        {ctor: "_Tuple2"
-                        ,_0: _v19._0._0
-                        ,_1: _v19._1._0},
-                        A2(zip,_v19._0._1,_v19._1._1));}
-                   break;}
-              return _L.fromArray([]);}
-         _U.badCase($moduleName,
-         "between lines 83 and 85");
-      }();
-   });
+   var columnGap = 20;
+   var columnWidth = 250;
+   var minWidth = columnWidth * 3 + columnGap * 2;
+   var buttonGap = 2;
+   var buttonHeight = 40;
    var checkboxContainer = F3(function (courseInfo,
    w,
    h) {
       return function () {
-         var courses = A2(zip,
-         $Basics.snd($List.unzip($Dict.values(courseInfo))),
-         $Dict.keys(courseInfo));
+         var buttonSpacer = A2($Graphics$Element.spacer,
+         1,
+         buttonGap);
+         var courses = A3($Dict.foldl,
+         F3(function (k,_v4,acc) {
+            return function () {
+               switch (_v4.ctor)
+               {case "_Tuple2":
+                  return A2($Basics._op["++"],
+                    acc,
+                    _L.fromArray([{ctor: "_Tuple2"
+                                  ,_0: _v4._1
+                                  ,_1: k}]));}
+               _U.badCase($moduleName,
+               "on line 137, column 48 to 63");
+            }();
+         }),
+         _L.fromArray([]),
+         courseInfo);
          return $Graphics$Element.color(color1)(A3($Graphics$Element.container,
          w,
          h,
-         $Graphics$Element.midTop)($Graphics$Element.flow($Graphics$Element.down)(A2($Basics._op["++"],
-         _L.fromArray([A2($Graphics$Element.spacer,
-         1,
-         2)]),
+         $Graphics$Element.midTop)($Graphics$Element.flow($Graphics$Element.down)(A2($List._op["::"],
+         buttonSpacer,
          A2($Basics._op["++"],
-         $List.intersperse(A2($Graphics$Element.spacer,
-         1,
-         2))(A2($List.map,
+         $List.intersperse(buttonSpacer)(A2($List.map,
          $Basics.uncurry(A4(makeCheckableButton,
          {ctor: "_Tuple2"
          ,_0: color3
@@ -3521,92 +3022,205 @@ Elm.Main.make = function (_elm) {
          ,_0: color2
          ,_1: color3},
          w - 4,
-         40)),
+         buttonHeight)),
          courses)),
-         _L.fromArray([A2($Graphics$Element.spacer,
-         1,
-         2)]))))));
+         _L.fromArray([buttonSpacer]))))));
       }();
    });
-   var appContainer = F5(function (s,
-   initTime,
-   curTime,
+   var selectedCoursesContainer = F3(function (state,
    w,
    h) {
       return function () {
-         var gap = 20;
-         return A2($Graphics$Element.flow,
-         $Graphics$Element.right,
-         _L.fromArray([A3(checkboxContainer,
-                      s.courseInfo,
-                      w,
-                      h)
-                      ,A2($Graphics$Element.spacer,
-                      gap,
-                      1)
-                      ,A5(selectedCoursesContainer,
-                      s,
-                      initTime,
-                      curTime,
-                      w,
-                      h)
-                      ,A2($Graphics$Element.spacer,
-                      gap,
-                      1)
-                      ,A3(resultsContainer,s,w,h)]));
+         var buttonSpacer = A2($Graphics$Element.spacer,
+         1,
+         buttonGap);
+         var selectedCourses = A2($List.map,
+         function (s) {
+            return $Graphics$Element.color(color3)(A3($Graphics$Element.container,
+            w - 4,
+            buttonHeight,
+            $Graphics$Element.middle)($Text.centered($Text.typeface(_L.fromArray(["Roboto"
+                                                                                 ,"sans-serif"]))($Text.height(22)($Text.color(color1)($Text.fromString(s)))))));
+         },
+         $Set.toList(state.selectedCourses));
+         return $Graphics$Element.color(color1)(A3($Graphics$Element.container,
+         w,
+         h,
+         $Graphics$Element.midTop)($Graphics$Element.flow($Graphics$Element.down)(A2($List._op["::"],
+         buttonSpacer,
+         A2($Basics._op["++"],
+         A2($List.intersperse,
+         buttonSpacer,
+         selectedCourses),
+         _L.fromArray([buttonSpacer]))))));
       }();
    });
-   var mainContainer = F5(function (w,
-   h,
-   initTime,
-   curTime,
-   s) {
-      return A2($Graphics$Element.color,
-      color3,
-      A3($Graphics$Element.container,
-      w,
-      h - headerHeight,
-      $Graphics$Element.midTop)(A2($Graphics$Element.flow,
-      $Graphics$Element.down,
-      _L.fromArray([A2($Graphics$Element.spacer,
-                   1,
-                   20)
-                   ,A5(appContainer,
-                   s,
-                   initTime,
-                   curTime,
-                   250,
-                   800)
-                   ,A2($Graphics$Element.spacer,
-                   1,
-                   20)
-                   ,A3($Graphics$Element.container,
-                   790,
-                   20,
-                   $Graphics$Element.middle)(genPermalink(s))]))));
-   });
-   var view = F4(function (_v26,
-   s,
-   initTime,
-   curTime) {
+   var resultsContainer = F3(function (state,
+   w,
+   h) {
       return function () {
-         switch (_v26.ctor)
-         {case "_Tuple2":
-            return A2($Graphics$Element.flow,
-              $Graphics$Element.down,
-              _L.fromArray([A2(header,
-                           _v26._0,
-                           headerHeight)
-                           ,A5(mainContainer,
-                           _v26._0,
-                           _v26._1,
-                           initTime,
-                           curTime,
-                           s)]));}
-         _U.badCase($moduleName,
-         "between lines 118 and 119");
+         var cardHeight = 2 * buttonHeight + buttonGap;
+         var makeCard = function (s) {
+            return $Graphics$Element.color(color3)(A3($Graphics$Element.container,
+            w - 4,
+            cardHeight,
+            $Graphics$Element.middle)($Graphics$Element.width(w - 4)($Text.centered($Text.height(22)($Text.typeface(_L.fromArray(["Roboto"
+                                                                                                                                 ,"sans-serif"]))($Text.color(color1)($Text.fromString(s))))))));
+         };
+         var _raw = A3($Set.foldl,
+         F2(function (s,_v8) {
+            return function () {
+               switch (_v8.ctor)
+               {case "Just":
+                  return A2($Maybe.map,
+                    function (_v11) {
+                       return function () {
+                          switch (_v11.ctor)
+                          {case "_Tuple2":
+                             return _v11._0 + _v8._0;}
+                          _U.badCase($moduleName,
+                          "on line 178, column 70 to 77");
+                       }();
+                    },
+                    A2($Dict.get,
+                    s,
+                    state.courseInfo));}
+               _U.badCase($moduleName,
+               "between lines 178 and 179");
+            }();
+         }),
+         $Maybe.Just(0),
+         state.selectedCourses),
+         $ = _raw.ctor === "Just" ? _raw : _U.badCase($moduleName,
+         "between lines 178 and 180"),
+         sum = $._0;
+         return $Graphics$Element.color(color1)(A3($Graphics$Element.container,
+         w,
+         h,
+         $Graphics$Element.midTop)(A2($Graphics$Element.flow,
+         $Graphics$Element.down,
+         _L.fromArray([A2($Graphics$Element.spacer,
+                      1,
+                      buttonGap)
+                      ,makeCard(A2($Basics._op["++"],
+                      "Workload score: ",
+                      $Basics.toString(sum)))
+                      ,A2($Graphics$Element.spacer,
+                      1,
+                      buttonGap)
+                      ,makeCard(A2($Basics._op["++"],
+                      "Semester rating: ",
+                      resultsMessage(sum)))]))));
       }();
    });
+   var appContainer = F3(function (s,
+   w,
+   h) {
+      return A2($Graphics$Element.flow,
+      $Graphics$Element.right,
+      _L.fromArray([A3(checkboxContainer,
+                   s.courseInfo,
+                   w,
+                   h)
+                   ,A2($Graphics$Element.spacer,
+                   columnGap,
+                   1)
+                   ,A3(selectedCoursesContainer,
+                   s,
+                   w,
+                   h)
+                   ,A2($Graphics$Element.spacer,
+                   columnGap,
+                   1)
+                   ,A3(resultsContainer,s,w,h)]));
+   });
+   var headerHeight = 100;
+   var title = _P.portOut("title",
+   function (v) {
+      return v;
+   },
+   "Course Load Calculator");
+   var genPermalink = function (state) {
+      return $Text.centered(A2($Text.link,
+      A3($Set.foldl,
+      F2(function (v,acc) {
+         return A2($Basics._op["++"],
+         acc,
+         A2($Basics._op["++"],
+         "course=",
+         A2($Basics._op["++"],v,"&")));
+      }),
+      "?",
+      state.selectedCourses),
+      $Text.fromString("Permalink")));
+   };
+   var mainContainer = F3(function (w,
+   winHeight,
+   s) {
+      return function () {
+         var numButtons = $List.length($Dict.toList(s.courseInfo));
+         var columnHeight = (buttonHeight + buttonGap) * A2($Basics.max,
+         4,
+         numButtons) + buttonGap;
+         var appContainer_ = A3(appContainer,
+         s,
+         columnWidth,
+         columnHeight);
+         var gap = 20;
+         var elt = A2($Graphics$Element.flow,
+         $Graphics$Element.down,
+         _L.fromArray([A2($Graphics$Element.spacer,
+                      1,
+                      gap)
+                      ,explanation(minWidth)
+                      ,A2($Graphics$Element.spacer,
+                      1,
+                      gap)
+                      ,appContainer_
+                      ,A2($Graphics$Element.spacer,
+                      1,
+                      gap)
+                      ,A3($Graphics$Element.container,
+                      minWidth,
+                      20,
+                      $Graphics$Element.middle)(genPermalink(s))]));
+         var h = $Basics.max(winHeight)($Graphics$Element.heightOf(elt));
+         return $Graphics$Element.color(color3)(A4($Graphics$Element.container,
+         w,
+         h,
+         $Graphics$Element.midTop,
+         elt));
+      }();
+   });
+   var view = F2(function (_v15,
+   s) {
+      return function () {
+         switch (_v15.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var w = A2($Basics.max,
+                 _v15._0,
+                 minWidth);
+                 return A2($Graphics$Element.flow,
+                 $Graphics$Element.down,
+                 _L.fromArray([A2(header,
+                              w,
+                              headerHeight)
+                              ,A3(mainContainer,
+                              w,
+                              _v15._1 - headerHeight,
+                              s)]));
+              }();}
+         _U.badCase($moduleName,
+         "between lines 101 and 103");
+      }();
+   });
+   var zip = $List.map2(F2(function (v0,
+   v1) {
+      return {ctor: "_Tuple2"
+             ,_0: v0
+             ,_1: v1};
+   }));
    var Click = function (a) {
       return {ctor: "Click",_0: a};
    };
@@ -3629,28 +3243,28 @@ Elm.Main.make = function (_elm) {
                             return _._0._1;}
                          break;}
                     _U.badCase($moduleName,
-                    "on line 49, column 31 to 58");
+                    "on line 42, column 31 to 58");
                  }();
                  var newCourseInfo = A3($Dict.update,
                  update._0,
-                 function (_v37) {
+                 function (_v26) {
                     return function () {
-                       switch (_v37.ctor)
+                       switch (_v26.ctor)
                        {case "Just":
-                          switch (_v37._0.ctor)
+                          switch (_v26._0.ctor)
                             {case "_Tuple2":
                                return $Maybe.Just({ctor: "_Tuple2"
-                                                  ,_0: _v37._0._0
-                                                  ,_1: $Basics.not(_v37._0._1)});}
+                                                  ,_0: _v26._0._0
+                                                  ,_1: $Basics.not(_v26._0._1)});}
                             break;}
                        _U.badCase($moduleName,
-                       "on line 47, column 70 to 90");
+                       "on line 40, column 70 to 90");
                     }();
                  },
                  state.courseInfo);
                  return function () {
-                    var _v42 = $Basics.not(b);
-                    switch (_v42)
+                    var _v31 = $Basics.not(b);
+                    switch (_v31)
                     {case false: return {_: {}
                                         ,courseInfo: newCourseInfo
                                         ,selectedCourses: A2($Set.remove,
@@ -3662,14 +3276,35 @@ Elm.Main.make = function (_elm) {
                                          update._0,
                                          state.selectedCourses)};}
                     _U.badCase($moduleName,
-                    "between lines 50 and 55");
+                    "between lines 43 and 48");
                  }();
               }();
             case "Init": return {_: {}
-                                ,courseInfo: $Dict.fromList($Basics.fst(update._0))
+                                ,courseInfo: $Dict.fromList($List.map(function (_v32) {
+                                   return function () {
+                                      switch (_v32.ctor)
+                                      {case "_Tuple2":
+                                         switch (_v32._1.ctor)
+                                           {case "_Tuple2":
+                                              return {ctor: "_Tuple2"
+                                                     ,_0: A2($Basics._op["++"],
+                                                     _v32._0,
+                                                     A2($Basics._op["++"],
+                                                     " (",
+                                                     A2($Basics._op["++"],
+                                                     $Basics.toString(_v32._1._0),
+                                                     ")")))
+                                                     ,_1: {ctor: "_Tuple2"
+                                                          ,_0: _v32._1._0
+                                                          ,_1: _v32._1._1}};}
+                                           break;}
+                                      _U.badCase($moduleName,
+                                      "on line 48, column 76 to 114");
+                                   }();
+                                })($Basics.fst(update._0)))
                                 ,selectedCourses: $Set.fromList($Basics.snd(update._0))};}
          _U.badCase($moduleName,
-         "between lines 45 and 55");
+         "between lines 38 and 48");
       }();
    });
    var getState = A3($Signal.foldp,
@@ -3685,18 +3320,10 @@ Elm.Main.make = function (_elm) {
    Click,
    $Signal.subscribe(click))));
    var main = A2($Signal._op["~"],
-   A2($Signal._op["~"],
-   A2($Signal._op["~"],
    A2($Signal._op["<~"],
    view,
    $Window.dimensions),
-   getState),
-   A2($Signal._op["<~"],
-   $Basics.fst,
-   $Time.timestamp($Signal.subscribe(click)))),
-   A2($Signal._op["<~"],
-   $Basics.fst,
-   $Time.timestamp($Time.fps(60))));
+   getState);
    var State = F2(function (a,b) {
       return {_: {}
              ,courseInfo: a
@@ -3711,6 +3338,11 @@ Elm.Main.make = function (_elm) {
                       ,zip: zip
                       ,genPermalink: genPermalink
                       ,headerHeight: headerHeight
+                      ,buttonHeight: buttonHeight
+                      ,buttonGap: buttonGap
+                      ,columnWidth: columnWidth
+                      ,columnGap: columnGap
+                      ,minWidth: minWidth
                       ,titleText: titleText
                       ,color1: color1
                       ,color2: color2
@@ -3719,6 +3351,7 @@ Elm.Main.make = function (_elm) {
                       ,view: view
                       ,header: header
                       ,mainContainer: mainContainer
+                      ,explanation: explanation
                       ,appContainer: appContainer
                       ,checkboxContainer: checkboxContainer
                       ,makeCheckableButton: makeCheckableButton
@@ -3726,10 +3359,7 @@ Elm.Main.make = function (_elm) {
                       ,selectedCoursesContainer: selectedCoursesContainer
                       ,isUnchecked: isUnchecked
                       ,resultsContainer: resultsContainer
-                      ,resultsMessage: resultsMessage
-                      ,makeFadeableElement: makeFadeableElement
-                      ,setAlpha: setAlpha
-                      ,animation: animation};
+                      ,resultsMessage: resultsMessage};
    return _elm.Main.values;
 };
 Elm.Maybe = Elm.Maybe || {};
@@ -7210,71 +6840,6 @@ Elm.Native.Text.make = function(elm) {
     };
 };
 
-Elm.Native.Time = {};
-Elm.Native.Time.make = function(elm) {
-
-  elm.Native = elm.Native || {};
-  elm.Native.Time = elm.Native.Time || {};
-  if (elm.Native.Time.values) return elm.Native.Time.values;
-
-  var Signal = Elm.Signal.make(elm);
-  var NS = Elm.Native.Signal.make(elm);
-  var Maybe = Elm.Maybe.make(elm);
-  var Utils = Elm.Native.Utils.make(elm);
-
-  function fpsWhen(desiredFPS, isOn) {
-    var msPerFrame = 1000 / desiredFPS;
-    var prev = elm.timer.now(), curr = prev, diff = 0, wasOn = true;
-    var ticker = NS.input(diff);
-    function tick(zero) {
-      return function() {
-        curr = elm.timer.now();
-        diff = zero ? 0 : curr - prev;
-        if (prev > curr) {
-          diff = 0;
-        }
-        prev = curr;
-        elm.notify(ticker.id, diff);
-      };
-    }
-    var timeoutID = 0;
-    function f(isOn, t) {
-      if (isOn) {
-        timeoutID = elm.setTimeout(tick(!wasOn && isOn), msPerFrame);
-      } else if (wasOn) {
-        clearTimeout(timeoutID);
-      }
-      wasOn = isOn;
-      return t;
-    }
-    return A3( Signal.map2, F2(f), isOn, ticker );
-  }
-
-  function every(t) {
-    var clock = NS.input(elm.timer.now());
-    function tellTime() {
-        elm.notify(clock.id, elm.timer.now());
-    }
-    setInterval(tellTime, t);
-    return clock;
-  }
-
-  function read(s) {
-      var t = Date.parse(s);
-      return isNaN(t) ? Maybe.Nothing : Maybe.Just(t);
-  }
-  return elm.Native.Time.values = {
-      fpsWhen : F2(fpsWhen),
-      fps : function(t) { return fpsWhen(t, Signal.constant(true)); },
-      every : every,
-      delay : NS.delay,
-      timestamp : NS.timestamp,
-      toDate : function(t) { return new window.Date(t); },
-      read   : read
-  };
-
-};
-
 Elm.Native.Transform2D = {};
 Elm.Native.Transform2D.make = function(elm) {
 
@@ -8402,80 +7967,6 @@ Elm.Text.make = function (_elm) {
                       ,markdown: markdown
                       ,asText: asText};
    return _elm.Text.values;
-};
-Elm.Time = Elm.Time || {};
-Elm.Time.make = function (_elm) {
-   "use strict";
-   _elm.Time = _elm.Time || {};
-   if (_elm.Time.values)
-   return _elm.Time.values;
-   var _op = {},
-   _N = Elm.Native,
-   _U = _N.Utils.make(_elm),
-   _L = _N.List.make(_elm),
-   _P = _N.Ports.make(_elm),
-   $moduleName = "Time",
-   $Basics = Elm.Basics.make(_elm),
-   $Native$Time = Elm.Native.Time.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var delay = $Native$Time.delay;
-   var timestamp = $Native$Time.timestamp;
-   var since = F2(function (t,s) {
-      return function () {
-         var stop = A2($Signal.map,
-         $Basics.always(-1),
-         A2(delay,t,s));
-         var start = A2($Signal.map,
-         $Basics.always(1),
-         s);
-         var delaydiff = A3($Signal.foldp,
-         F2(function (x,y) {
-            return x + y;
-         }),
-         0,
-         A2($Signal.merge,start,stop));
-         return A2($Signal.map,
-         F2(function (x,y) {
-            return !_U.eq(x,y);
-         })(0),
-         delaydiff);
-      }();
-   });
-   var every = $Native$Time.every;
-   var fpsWhen = $Native$Time.fpsWhen;
-   var fps = $Native$Time.fps;
-   var inMilliseconds = function (t) {
-      return t;
-   };
-   var millisecond = 1;
-   var second = 1000 * millisecond;
-   var minute = 60 * second;
-   var hour = 60 * minute;
-   var inHours = function (t) {
-      return t / hour;
-   };
-   var inMinutes = function (t) {
-      return t / minute;
-   };
-   var inSeconds = function (t) {
-      return t / second;
-   };
-   _elm.Time.values = {_op: _op
-                      ,millisecond: millisecond
-                      ,second: second
-                      ,minute: minute
-                      ,hour: hour
-                      ,inMilliseconds: inMilliseconds
-                      ,inSeconds: inSeconds
-                      ,inMinutes: inMinutes
-                      ,inHours: inHours
-                      ,fps: fps
-                      ,fpsWhen: fpsWhen
-                      ,every: every
-                      ,since: since
-                      ,timestamp: timestamp
-                      ,delay: delay};
-   return _elm.Time.values;
 };
 Elm.Transform2D = Elm.Transform2D || {};
 Elm.Transform2D.make = function (_elm) {

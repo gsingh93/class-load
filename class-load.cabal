@@ -80,7 +80,7 @@ executable         class-load
         Buildable: False
 
     main-is:           main.hs
-    hs-source-dirs:    app
+    hs-source-dirs:    src/app
     build-depends:     base
                      , class-load
                      , yesod
@@ -90,7 +90,7 @@ executable         class-load
 test-suite test
     type:              exitcode-stdio-1.0
     main-is:           Spec.hs
-    hs-source-dirs:    test
+    hs-source-dirs:    src/test
     ghc-options:       -Wall
 
     extensions: TemplateHaskell
