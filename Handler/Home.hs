@@ -14,6 +14,7 @@ getHomeR = do
                  ("EECS 270", 3),
                  ("EECS 280", 3), 
                  ("EECS 281", 4), 
+                 ("EECS 301", 3),
                  ("EECS 320", 3),
                  ("EECS 370", 3), 
                  ("EECS 373", 4), 
