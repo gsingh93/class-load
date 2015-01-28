@@ -1,3 +1,5 @@
+import Html
+import Html.Attributes (style)
 import Color (..)
 import Debug
 import Dict
@@ -144,7 +146,7 @@ checkboxContainer courseInfo w h =
 -- Makes checkable button that acts as a checkbox
 makeCheckableButton : (Color, Color) -> (Color, Color) -> Int -> Int -> Bool -> String -> Element
 makeCheckableButton upColor downColor w h b label =
-    let button bColor tColor = color bColor <| container w h middle <| centered <| typeface ["Roboto", "sans-serif"] <| height 22 <| Text.color tColor <| fromString label
+    let button bColor tColor = Html.toElement w h <| Html.div [style [("cursor", "pointer")]] [Html.fromElement <| color bColor <| container w h middle <| centered <| typeface ["Roboto", "sans-serif"] <| height 22 <| Text.color tColor <| fromString label]
         (backgroundColor, textColor) = if b then downColor else upColor
     in Input.clickable (Signal.send click label) <| button backgroundColor textColor
 
