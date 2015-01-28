@@ -3280,28 +3280,7 @@ Elm.Main.make = function (_elm) {
                  }();
               }();
             case "Init": return {_: {}
-                                ,courseInfo: $Dict.fromList($List.map(function (_v32) {
-                                   return function () {
-                                      switch (_v32.ctor)
-                                      {case "_Tuple2":
-                                         switch (_v32._1.ctor)
-                                           {case "_Tuple2":
-                                              return {ctor: "_Tuple2"
-                                                     ,_0: A2($Basics._op["++"],
-                                                     _v32._0,
-                                                     A2($Basics._op["++"],
-                                                     " (",
-                                                     A2($Basics._op["++"],
-                                                     $Basics.toString(_v32._1._0),
-                                                     ")")))
-                                                     ,_1: {ctor: "_Tuple2"
-                                                          ,_0: _v32._1._0
-                                                          ,_1: _v32._1._1}};}
-                                           break;}
-                                      _U.badCase($moduleName,
-                                      "on line 48, column 76 to 114");
-                                   }();
-                                })($Basics.fst(update._0)))
+                                ,courseInfo: $Dict.fromList($Basics.fst(update._0))
                                 ,selectedCourses: $Set.fromList($Basics.snd(update._0))};}
          _U.badCase($moduleName,
          "between lines 38 and 48");

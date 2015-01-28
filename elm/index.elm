@@ -45,7 +45,7 @@ updateState update state =
                          selectedCourses = Set.insert s state.selectedCourses}
                False -> { courseInfo = newCourseInfo,
                           selectedCourses = Set.remove s state.selectedCourses}
-      Init l -> { courseInfo = Dict.fromList <| List.map (\(s, (i, b)) -> (s ++ " (" ++ toString i ++ ")", (i, b))) <| fst l, selectedCourses = Set.fromList <| snd l }
+      Init l -> { courseInfo = Dict.fromList <|fst l, selectedCourses = Set.fromList <| snd l }
 
 type Update = Init (List (String, (Int, Bool)), List String) | Click String
 getState : Signal State
